@@ -38,6 +38,13 @@ async function showForecast(latlng) {
     let response = await fetch(url);
     let jsondata = await response.json();
     //console.log(jsondata);
+
+    //Popup erstellen
+    L.popup([
+        latlng.lat, latlng.lng
+    ], {
+        content: "juhu, Pause bis 20 nach!"
+    }).openOn(overlays.forecast);
 }
 
 // auf Kartenklick reagieren
