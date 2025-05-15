@@ -40,10 +40,22 @@ async function showForecast(latlng) {
     //console.log(jsondata);
 
     //Popup erstellen
+    let markup =`
+        <ul>
+            <li>Luftdruck (hPa): air_pressure_at_sea_level</li>
+            <li>Lufttemperatur (C°): air_temperature</li>
+            <li>Bewölkungsgrad (%): cloud_area_fraction</li>
+            <li>Luftfeuchtigkeit (%): relative_humidity</li>
+            <li>Windrichtung (°): wind_from_direction</li>
+            <li>Windgeschwindigkeit (km/h): wind_speed</li>
+        </ul>
+        `;
+  
+
     L.popup([
         latlng.lat, latlng.lng
     ], {
-        content: "juhu, Pause bis 20 nach!"
+        content: markup,
     }).openOn(overlays.forecast);
 }
 
