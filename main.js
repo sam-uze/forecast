@@ -29,3 +29,22 @@ let layerControl = L.control.layers({
 L.control.scale({
     imperial: false,
 }).addTo(map);
+
+// auf Kartenklick reagieren
+map.on("click", function (evt) {
+    let lat = evt.latlng.lat;
+    let lng = evt.latlng.lng;
+    console.log(lat, lng);
+    overlays.forecast.clearLayers();
+    overlays.wind.clearLayers();
+    getForecast(lat, lng);
+    getWind(lat, lng);
+});
+
+// KLick auf Innsbruck simulieren
+map.fire("click", {
+    latlng: {
+        lat: ibk.lat,
+        lng: ibk.lng
+    }
+});
