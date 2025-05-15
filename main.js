@@ -30,6 +30,14 @@ L.control.scale({
     imperial: false,
 }).addTo(map);
 
+//Orte über OpenStreetmap Reverse Geocoding bestimmt
+async function getPlaceName(url) {
+    let response = await fetch(url);
+    let jsondata = await response.json();
+    //console.log(jsondata);
+    return jsondata.display_name;
+}
+
 // Wettervorhersage MET Norway
 async function showForecast(latlng) {
     //console.log("Popup erzeugt bei", latlng);
