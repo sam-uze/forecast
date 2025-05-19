@@ -30,6 +30,59 @@ L.control.scale({
     imperial: false,
 }).addTo(map);
 
+async function addWindLayer() {
+
+    let urlwind = "https://geographie.uibk.ac.at/data/ecmwf/data/wind-10u-10v-europe.json";
+    let response = await fetch(urlwind);
+    let jsondata = await response.json();
+    
+
+    let velocityLayer = L.velocityLayer({
+    displayValues: true,
+    displayOptions: {
+        // label prefix
+        velocityType: "Global Wind",
+
+        // leaflet control position
+        position: "bottomleft",
+
+        // no data at cursor
+        emptyString: "No velocity data",
+
+        // see explanation below
+        angleConvention: "bearingCW",
+
+        // display cardinal direction alongside degrees
+        showCardinal: false,
+
+        // one of: ['ms', 'k/h', 'mph', 'kt']
+        speedUnit: "ms",
+
+        // direction label prefix
+        directionString: "Direction",
+
+        // speed label prefix
+        speedString: "Speed",
+    },
+    data: jsondata, // see demo/*.json, or wind-js-server for example data service
+
+    // OPTIONAL
+    minVelocity: 0, // used to align color scale
+    maxVelocity: 10, // used to align color scale
+    velocityScale: 0.005, // modifier for particle animations, arbitrarily defaults to 0.005
+    colorScale: [], // define your own array of hex/rgb colors
+    onAdd: null, // callback function
+    onRemove: null, // callback function
+    opacity: 0.97, // layer opacity, default 0.97
+
+    // optional pane to add the layer, will be created if doesn't exist
+    // leaflet v1+ only (falls back to overlayPane for < v1)
+    paneName: "overlayPane",
+    });
+    overlays.wind.addLayer(velocityLayer);
+}
+addWindLayer();
+
 //Orte über OpenStreetmap Reverse Geocoding bestimmt
 async function getPlaceName(url) {
     let response = await fetch(url);
@@ -88,6 +141,7 @@ async function showForecast(latlng) {
         content: markup,
     }).openOn(overlays.forecast);
 }
+
 
 // auf Kartenklick reagieren
 map.on("click", function (evt) {
