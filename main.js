@@ -12,8 +12,7 @@ let map = L.map("map").setView([ibk.lat, ibk.lng], 5);
 // thematische Layer
 let overlays = {
     forecast: L.featureGroup(),
-    wind: L.featureGroup(),
-    wind_direction: L.featureGroup().addTo(map)
+    wind: L.featureGroup().addTo(map)
 }
 
 // Layer Control
@@ -24,7 +23,6 @@ let layerControl = L.control.layers({
 }, {
     "Wettervorhersage MET Norway": overlays.forecast,
     "ECMWF Windvorhersage": overlays.wind,
-    "Windrichtung": overlays.wind_direction
 }).addTo(map);
 
 // Maßstab
@@ -33,57 +31,44 @@ L.control.scale({
 }).addTo(map);
 
 // Windrichtung
-async function addWindLayer() {
+// Winddaten visualisieren mit Leaflet Velocity
+async function loadWindData() {
+    const response = await fetch("https://geographie.uibk.ac.at/data/ecmwf/data/wind-10u-10v-europe.json");
+    const windData = await response.json();
 
-    let url = "https://geographie.uibk.ac.at/data/ecmwf/data/wind-10u-10v-europe.json";
-    let response = await fetch(url);
-    let jsondata = await response.json();
-    
-
-    let velocityLayer = L.velocityLayer({
-    displayValues: true,
-    displayOptions: {
-        // label prefix
-        velocityType: "Global Wind",
-
-        // leaflet control position
-        position: "bottomleft",
-
-        // no data at cursor
-        emptyString: "No velocity data",
-
-        // see explanation below
-        angleConvention: "bearingCW",
-
-        // display cardinal direction alongside degrees
-        showCardinal: false,
-
-        // one of: ['ms', 'k/h', 'mph', 'kt']
-        speedUnit: "ms",
-
-        // direction label prefix
-        directionString: "Direction",
-
-        // speed label prefix
-        speedString: "Speed",
-    },
-    data: jsondata, // see demo/*.json, or wind-js-server for example data service
-
-    // OPTIONAL
-    minVelocity: 0, // used to align color scale
-    maxVelocity: 10, // used to align color scale
-    velocityScale: 0.005, // modifier for particle animations, arbitrarily defaults to 0.005
-    colorScale: [], // define your own array of hex/rgb colors
-    onAdd: null, // callback function
-    onRemove: null, // callback function
-    opacity: 0.97, // layer opacity, default 0.97
-
-    // optional pane to add the layer, will be created if doesn't exist
-    // leaflet v1+ only (falls back to overlayPane for < v1)
-    paneName: "overlayPane",
+    const velocityLayer = L.velocityLayer({
+        displayValues: true,
+        displayOptions: {
+            // label prefix
+            velocityType: "Global Wind",
+            // leaflet control position
+            displayPosition: "bottomleft",
+            // no data at cursor
+            displayEmptyString: "Keine Winddaten verfügbar",
+            // see explanation below
+            angleConvention: "bearingCW",
+            // display cardinal direction alongside degrees
+            showCardinal: false,
+            // one of: ['ms', 'k/h', 'mph', 'kt']
+            speedUnit: "km/h",
+            // direction label prefix
+            directionString: "Direction",
+            // speed label prefix
+            speedString: "Speed",
+        },
+        data: windData,
+        // OPTIONAL
+        minVelocity: 0, // used to align color scale
+        maxVelocity: 100, // used to align color scale
+        velocityScale: 0.01, // Größe der Pfeile
+        colorScale: ["#ffffff", "#ffffb2", "#fecc5c", "#fd8d3c", "#f03b20", "#bd0026"] // optional
     });
-    velocityLayer.addTo(overlays.wind_direction);
+
+    velocityLayer.addTo(overlays.wind);
 }
+
+// Winddaten beim Start laden
+loadWindData();
 
 //Orte über OpenStreetmap Reverse Geocoding bestimmt
 async function getPlaceName(url) {
