@@ -57,9 +57,8 @@ async function loadWindData() {
             speedString: "Speed",
         },
         data: windData,
-    });
-
-    velocityLayer.addTo(overlays.wind);
+    
+    }).addTo(overlays.wind);
 }
 
 // Winddaten beim Start laden
