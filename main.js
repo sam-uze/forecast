@@ -11,8 +11,9 @@ let map = L.map("map").setView([ibk.lat, ibk.lng], 5);
 
 // thematische Layer
 let overlays = {
-    forecast: L.featureGroup().addTo(map),
-    wind: L.featureGroup().addTo(map)
+    forecast: L.featureGroup(),
+    wind: L.featureGroup(),
+    wind_direction: L.featureGroup().addTo(map)
 }
 
 // Layer Control
@@ -23,6 +24,7 @@ let layerControl = L.control.layers({
 }, {
     "Wettervorhersage MET Norway": overlays.forecast,
     "ECMWF Windvorhersage": overlays.wind,
+    "Windrichtung": overlays.wind_direction
 }).addTo(map);
 
 // Maßstab
@@ -30,10 +32,11 @@ L.control.scale({
     imperial: false,
 }).addTo(map);
 
+// Windrichtung
 async function addWindLayer() {
 
-    let urlwind = "https://geographie.uibk.ac.at/data/ecmwf/data/wind-10u-10v-europe.json";
-    let response = await fetch(urlwind);
+    let url = "https://geographie.uibk.ac.at/data/ecmwf/data/wind-10u-10v-europe.json";
+    let response = await fetch(url);
     let jsondata = await response.json();
     
 
@@ -79,9 +82,8 @@ async function addWindLayer() {
     // leaflet v1+ only (falls back to overlayPane for < v1)
     paneName: "overlayPane",
     });
-    overlays.wind.addLayer(velocityLayer);
+    velocityLayer.addTo(overlays.wind_direction);
 }
-addWindLayer();
 
 //Orte über OpenStreetmap Reverse Geocoding bestimmt
 async function getPlaceName(url) {
