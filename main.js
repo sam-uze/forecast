@@ -57,11 +57,6 @@ async function loadWindData() {
             speedString: "Speed",
         },
         data: windData,
-        // OPTIONAL
-        minVelocity: 0, // used to align color scale
-        maxVelocity: 100, // used to align color scale
-        velocityScale: 0.01, // Größe der Pfeile
-        colorScale: ["#ffffff", "#ffffb2", "#fecc5c", "#fd8d3c", "#f03b20", "#bd0026"] // optional
     });
 
     velocityLayer.addTo(overlays.wind);
