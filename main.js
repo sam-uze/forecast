@@ -32,9 +32,16 @@ L.control.scale({
 
 // Windrichtung
 // Winddaten visualisieren mit Leaflet Velocity
-async function loadWindData() {
-    const response = await fetch("https://geographie.uibk.ac.at/data/ecmwf/data/wind-10u-10v-europe.json");
-    const windData = await response.json();
+async function loadWindData(url) {
+    const response = await fetch(url);
+    const jsondata = await response.json();
+
+    console.log(jsondata[0].header.refTime);
+    console.log(jsondata[0].header.forecastTime);
+
+    let forecastDate = new Date(jsondata[0].header.refTime);
+    forecastDate.setHours(forecastDate.getHours() + jsondata[0].header.forecastTime);
+    console.log(forecastDate);
 
     const velocityLayer = L.velocityLayer({
         displayValues: true,
@@ -52,23 +59,25 @@ async function loadWindData() {
             // one of: ['ms', 'k/h', 'mph', 'kt']
             speedUnit: "km/h",
             // direction label prefix
-            directionString: "Direction",
+            directionString: "Windrichtung",
             // speed label prefix
-            speedString: "Speed",
+            speedString: "Windgeschwindigkeit",
         },
-        data: windData,
+        data: jsondata,
+        lineWidth: 2,
+        
     
     }).addTo(overlays.wind);
 }
 
 // Winddaten beim Start laden
-loadWindData();
+loadWindData("https://geographie.uibk.ac.at/data/ecmwf/data/wind-10u-10v-europe.json");
 
 //Orte über OpenStreetmap Reverse Geocoding bestimmt
 async function getPlaceName(url) {
     let response = await fetch(url);
     let jsondata = await response.json();
-    //console.log(jsondata);
+    console.log(jsondata);
     return jsondata.display_name;
 }
 
