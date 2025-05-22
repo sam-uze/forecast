@@ -36,12 +36,17 @@ async function loadWindData(url) {
     const response = await fetch(url);
     const jsondata = await response.json();
 
-    console.log(jsondata[0].header.refTime);
-    console.log(jsondata[0].header.forecastTime);
+    //console.log(jsondata[0].header.refTime);
+    //console.log(jsondata[0].header.forecastTime);
 
     let forecastDate = new Date(jsondata[0].header.refTime);
     forecastDate.setHours(forecastDate.getHours() + jsondata[0].header.forecastTime);
-    console.log(forecastDate);
+    //console.log(forecastDate);
+
+    let forecastSpan = document.querySelector("#forecast-link");
+    console.log(forecastSpan);
+    forecastSpan.innerHTML = `
+        (<a href="${url}" target="met.no">${forecastDate.toLocaleString()}</a>)`;
 
     const velocityLayer = L.velocityLayer({
         displayValues: true,
